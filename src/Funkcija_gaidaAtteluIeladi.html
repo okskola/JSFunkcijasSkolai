@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<HTML>
+ <head>
+  <title> 2019 attēli3 </title>
+ </head>
+
+<body>
+ <canvas id="idPamatne" width="400" height="300" style="background-image: url('fons.jpg');"> 
+ </canvas>
+ <script>
+
+  var ctx = document.getElementById( "idPamatne" ).getContext("2d"); 
+
+  //   Tīmekļa pārlūkprogrammas HTML lasa simbolu pēc simbola, rindu pēc rindas un visas
+  // darbības veic lineāri. Bet gadījumā ar ārējām datnēm, kādas ir arī attēli, to ielāde
+  // ir asinhrona. Tas nozīmē, ka brīdī, kad pārlūkprogramma uzzina (nolasa HTML vai JavaScript
+  // kodā, ka ir nepieciešams ielādēt attēlu, tā palaiž jaunu fona procesu attēla ielādei. Pie tam 
+  // turpina paralēli lasīt un izpildīt HTML un JavaScript kodu. 
+  //   Šāda pārlūkrprammas uzvedība noved pie "defekta", ka JavaScript kods turpina izpildīties,
+  // bet attēls no tīmekļa vai lokālās datnes vēl nav ielādējies pārlūkprogrammas atmiņā. Ja tūlīt
+  // cenšas attēlu zīmēt, tad pārlūkprogramma neko uzzīmēt nevar (tai vēl nav šī attēla).
+  //   Lai skolēni varētu lietot savā JavaScript programmā attēlus, esmu uzrakstījs speciālu funkciju
+  // gaidaAtteluIeladi(), kura sagaida, kad attēli būs ielādējušies. Jāskatās piemēri un jālasa komentāri
+  // pie tiem, lai saprastu šīs funkcijas darbību.
+  //   Šajā kodā tiek pieņemts, ka tajā pašā mapē, kur ir šis kods, atrodas arī attēlu datnes:
+  //  fons.jpg, bumba.jpg, attels1.png, attels2.png un attels3.png
+
+  ///////////////////////////////////////
+  // Piemērs ar vienu attēlu
+  ///////////////////////////////////////
+
+  // Izveido attēla mainīgo
+  var att = new Image();
+  
+  // Attēlu mainīgajam piešķir ielādējamā attēla datnes nosaukumu (neaizmirstot paplašinājumu).
+  // Ja raksta tikai attēla datnes nosaukumu, tad tam jāatrodas tajā pašā mapē. 
+  //    Ja attēls ir cita mapē, tad jāraksta ceļš līdz attēlam (pilns vai relatīvs).
+  att.src = "bumba.jpg";
+  
+  // Izsauc funkciju, kura sagaida, kad attēls (mainīgajā att) ir ielādēts no tīkla
+  //   un tad izsauc funkciju zimet()
+  gaidaAtteluIeladi( zimet, att );
+  
+  // Funkcija, kura tiks izsaukta pēc attēlu ielādes
+  //   Šajā piemērā zīmē attelu uz pamatnes un ar to programma beidzas.
+  //   Īstas programmas gadījuma viss, kas tiek darīts pēc attēlu ielādes
+  //     ir jāraksta šajā funkcijā vai no šīs tālāk izsauktajās funkcijās.
+  function zimet() {
+      ctx.drawImage( att, 50, 50 );
+  }
+
+  ///////////////////////////////////////
+  // Piemērs ar vairākiem attēliem 
+  // !!!Īstā programmā būtu labi lietot funkciju gaidaAtteluIeladi() tikai
+  //   VIENREIZ, lai ielādētu visus nepieciešamos attēlus kopā vienā vietā!!!
+  ///////////////////////////////////////
+  var att1 = new Image();
+  var att2 = new Image();
+  var att3 = new Image();
+  att1.src = "attels1.png";
+  att2.src = "attels2.png";
+  att3.src = "attels3.png";
+  // Šajā gadījumā funkcija gaidaAtteluIeladi() izsauks funkciju zimetTris(),
+  //   kad visi trīs dotie attēli ir ielādējušies atmiņā.
+  gaidaAtteluIeladi( zimetTris, att1, att2, att3 );
+  function zimetTris() {
+      ctx.drawImage( att1, 100, 10 );
+      ctx.drawImage( att2, 150, 10 );
+      ctx.drawImage( att3, 200, 50 );
+  }
+  
+  
+  // Funkcijai gaida, kad norādītie attēli ir ielādējušies no tīkla un tad izsauc pirmajā parametrā norādīto funkciju.
+  // Gaidīšanas laikā lapas apakšā (pēc visiem elementiem) uzrādās "Attēlu ielāde ...", kas pazūd brīdī, kad visi attēli ir ielādēti.
+  // © 2018-2019 Ojārs Krūmiņš
+  // Versija 1.3
+  function gaidaAtteluIeladi() {
+    var images = [].slice.call(arguments); var num = arguments.length;
+    var l = document.createElement('div'); l.id = "loading_div"; l.innerHTML = "Attēlu ielāde "; document.body.appendChild(l); var lcount = 1;
+    var interval = setInterval(function(){ var n = 1; for (var i = 1; i < images.length; i++){ if( images[i].complete ) { n++; } }
+        if( n == num ) { clearInterval(interval); document.getElementById("loading_div").remove(); images[0](); }
+        lcount = (lcount+1)%50+1; l.innerHTML = "Attēlu ielāde "+".".repeat(lcount/10);
+    }, 10);
+  }
+
+
+</script>
+</body>
+</html> 
