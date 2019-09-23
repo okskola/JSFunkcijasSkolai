@@ -1,4 +1,4 @@
-funkcion testsFunkcijasSkolai( teksts ) {
+﻿function testsFunkcijasSkolai( teksts ) {
   alert( teksts );
 }
 
